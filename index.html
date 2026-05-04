@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Música de Rafael</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700;900&family=Open+Sans:wght@400;600;700&display=swap');
+
+  :root {
+    --bg:          #08121f;
+    --surface:     #0d2244;
+    --card:        #0f2d5e;
+    --blue:        #1565C0;
+    --blue-bright: #1E88E5;
+    --blue-light:  #42A5F5;
+    --accent:      #FFCC02;
+    --white:       #FFFFFF;
+    --off-white:   #D8EEFF;
+    --muted:       #6BA3D6;
+    --green:       #00E676;
+    --red:         #FF5252;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    background: var(--bg);
+    font-family: 'Open Sans', sans-serif;
+    min-height: 100vh;
+    color: var(--white);
+    overflow-x: hidden;
+    padding-bottom: 130px;
+  }
+
+  header {
+    background: linear-gradient(150deg, #0d2244 0%, #1565C0 100%);
+    padding: 26px 22px 22px;
+    text-align: center;
+    border-bottom: 4px solid var(--accent);
+    box-shadow: 0 4px 28px rgba(0,0,0,0.55);
+  }
+  header h1 {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 2.5rem; font-weight: 900; color: var(--white);
+  }
+  header h1 span { color: var(--accent); }
+  header p { color: var(--off-white); font-size: 1rem; margin-top: 6px; font-weight: 600; opacity: 0.9; }
+
+  #player-section { display: none; margin: 16px 16px 0; }
+  #player-section.active { display: block; }
+
+  #player-wrap {
+    border-radius: 16px 16px 0 0;
+    overflow: hidden;
+    border: 3px solid var(--blue-bright);
+    border-bottom: none;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+    background: #000;
+    aspect-ratio: 16/9;
+    position: relative;
+  }
+
+  #player-loading {
+    position: absolute; inset: 0;
+    background: var(--surface);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 14px;
+    color: var(--muted); font-size: 1rem; font-weight: 600;
+    transition: opacity 0.5s;
+  }
+  #player-loading.gone { opacity: 0; pointer-events: none; }
+
+  .spinner {
+    width: 46px; height: 46px;
+    border: 4px solid rgba(66,165,245,0.2);
+    border-top-color: var(--blue-light);
+    border-radius: 50%;
+    animation: spin 0.85s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  #np-bar {
+    background: var(--blue);
+    border: 3px solid var(--blue-bright);
+    border-top: none;
+    border-radius: 0 0 16px 16px;
+    padding: 16px 18px 18px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+  }
+  #np-label {
+    font-size: 0.75rem; letter-spacing: 3px;
+    text-transform: uppercase; color: var(--accent);
+    font-weight: 700; margin-bottom: 8px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  #np-label::before {
+    content: '';
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--green); box-shadow: 0 0 10px var(--green);
+    animation: pulse 1.5s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%,100% { opacity:1; transform:scale(1); }
+    50% { opacity:0.3; transform:scale(0.7); }
+  }
+  #np-title {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.45rem; font-weight: 900;
+    color: var(--white); line-height: 1.2; margin-bottom: 4px;
+  }
+  #np-artist { color: var(--off-white); font-size: 1rem; font-weight: 600; margin-bottom: 14px; opacity: 0.9; }
+
+  #queue-hint { font-size: 0.82rem; color: var(--off-white); margin-bottom: 14px; opacity: 0.75; font-weight: 600; }
+  #queue-hint span { color: var(--accent); font-weight: 700; }
+
+  #controls { display: flex; gap: 10px; align-items: stretch; }
+
+  .ctrl {
+    flex: 1; background: var(--bg);
+    border: 2px solid var(--blue-light);
+    border-radius: 14px; padding: 16px 8px;
+    font-size: 1rem; font-weight: 700; cursor: pointer;
+    color: var(--white);
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    transition: background 0.15s, transform 0.1s;
+    font-family: 'Open Sans', sans-serif; min-height: 56px;
+  }
+  .ctrl:active { transform: scale(0.96); background: var(--card); }
+
+  #btn-stop {
+    flex: 0 0 56px; height: 56px;
+    background: rgba(255,82,82,0.12);
+    border: 2px solid var(--red);
+    border-radius: 14px; cursor: pointer; color: var(--red);
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.15s, transform 0.1s;
+  }
+  #btn-stop:active { transform: scale(0.96); background: rgba(255,82,82,0.25); }
+
+  #song-list { padding: 24px 16px 0; }
+  #list-label {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.78rem; letter-spacing: 3px;
+    text-transform: uppercase; color: var(--accent);
+    font-weight: 700; margin-bottom: 14px;
+  }
+
+  #empty-state { text-align: center; padding: 50px 20px; color: var(--muted); display: none; }
+  #empty-state.visible { display: block; }
+  #empty-state svg { opacity: 0.2; margin-bottom: 18px; }
+  #empty-state p { font-size: 1.1rem; line-height: 1.8; font-weight: 600; }
+
+  .song-card {
+    background: var(--surface);
+    border: 2px solid rgba(66,165,245,0.18);
+    border-radius: 18px; padding: 18px 16px;
+    margin-bottom: 12px;
+    display: flex; align-items: center; gap: 15px;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s, transform 0.1s;
+    -webkit-user-select: none; user-select: none;
+    min-height: 84px;
+  }
+  .song-card:active { transform: scale(0.985); }
+  .song-card.playing {
+    background: var(--blue);
+    border-color: var(--accent);
+    box-shadow: 0 4px 24px rgba(21,101,192,0.55);
+  }
+  .song-card.next-up { border-color: rgba(66,165,245,0.5); background: #0d2855; }
+
+  .song-num {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.2rem; font-weight: 900;
+    color: var(--muted); width: 30px; text-align: center; flex-shrink: 0;
+  }
+  .song-card.playing .song-num { color: var(--accent); font-size: 1.4rem; }
+  .song-card.next-up .song-num { color: var(--blue-light); }
+
+  .song-disc {
+    width: 54px; height: 54px; border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #1E88E5, #08121f);
+    border: 3px solid rgba(66,165,245,0.25);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; position: relative; overflow: hidden;
+  }
+  .song-disc::after { content: ''; width: 16px; height: 16px; background: var(--bg); border-radius: 50%; position: absolute; }
+  .song-card.playing .song-disc { border-color: var(--accent); animation: spinDisc 3s linear infinite; }
+  @keyframes spinDisc { to { transform: rotate(360deg); } }
+
+  .song-info { flex: 1; min-width: 0; }
+  .song-title {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.08rem; font-weight: 700; color: var(--white);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .song-card.playing .song-title { color: var(--accent); }
+  .song-card.next-up .song-title { color: var(--blue-light); }
+  .song-artist { font-size: 0.9rem; color: var(--muted); margin-top: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 600; }
+  .song-card.playing .song-artist { color: var(--off-white); }
+
+  .song-right { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; flex-shrink: 0; }
+  .next-label { font-size: 0.68rem; font-weight: 700; color: var(--blue-light); letter-spacing: 1px; text-transform: uppercase; }
+
+  #fab {
+    position: fixed; bottom: 28px; right: 20px;
+    width: 68px; height: 68px;
+    background: var(--accent);
+    border-radius: 50%; border: none; color: var(--bg);
+    font-size: 2.2rem; font-weight: 900; cursor: pointer;
+    box-shadow: 0 6px 28px rgba(255,204,2,0.55);
+    display: flex; align-items: center; justify-content: center;
+    transition: transform 0.2s; z-index: 100;
+  }
+  #fab:active { transform: scale(0.91); }
+
+  #add-panel { position: fixed; inset: 0; z-index: 200; display: none; align-items: flex-end; }
+  #add-panel.open { display: flex; }
+  #add-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.78); backdrop-filter: blur(5px); }
+  #add-sheet {
+    position: relative; background: var(--surface);
+    border-radius: 28px 28px 0 0; padding: 30px 22px 50px;
+    width: 100%; z-index: 1;
+    border-top: 3px solid var(--blue-bright);
+    max-height: 92vh; overflow-y: auto;
+  }
+  #add-sheet h2 { font-family: 'Montserrat', sans-serif; font-size: 1.5rem; font-weight: 900; color: var(--white); margin-bottom: 8px; }
+  .hint { font-size: 0.9rem; color: var(--muted); margin-bottom: 20px; line-height: 1.6; font-weight: 600; }
+  .hint strong { color: var(--blue-light); }
+  .url-help { background: rgba(30,136,229,0.1); border: 2px solid rgba(30,136,229,0.25); border-radius: 12px; padding: 12px 16px; font-size: 0.85rem; color: var(--off-white); line-height: 1.6; margin-bottom: 16px; font-weight: 600; }
+  .url-help strong { color: var(--blue-light); }
+  .field-label { font-family: 'Montserrat', sans-serif; font-size: 0.75rem; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); font-weight: 700; margin-bottom: 7px; }
+  .field-input { width: 100%; background: var(--card); border: 2px solid rgba(66,165,245,0.3); border-radius: 14px; padding: 16px 18px; color: var(--white); font-size: 1.05rem; font-family: 'Open Sans', sans-serif; font-weight: 600; margin-bottom: 16px; outline: none; -webkit-appearance: none; transition: border-color 0.2s; }
+  .field-input:focus { border-color: var(--blue-light); }
+  .field-input::placeholder { color: var(--muted); opacity: 0.7; }
+  #yt-preview { display: none; background: var(--card); border: 2px solid var(--blue-light); border-radius: 14px; overflow: hidden; margin-bottom: 16px; }
+  #yt-preview.visible { display: block; }
+  #yt-thumb { width: 100%; aspect-ratio: 16/9; object-fit: cover; display: block; }
+  #yt-ok { padding: 12px 16px; font-size: 0.9rem; color: var(--green); font-weight: 700; display: flex; align-items: center; gap: 8px; }
+  #btn-save { width: 100%; padding: 19px; background: var(--blue-bright); border: none; border-radius: 16px; font-size: 1.15rem; font-weight: 700; color: var(--white); cursor: pointer; font-family: 'Montserrat', sans-serif; margin-top: 4px; transition: opacity 0.2s; }
+  #btn-save:active { opacity: 0.85; }
+  #btn-cancel { width: 100%; padding: 16px; background: none; border: none; color: var(--muted); font-size: 1rem; cursor: pointer; font-family: 'Open Sans', sans-serif; font-weight: 600; margin-top: 10px; }
+
+  #toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-90px); background: var(--blue-bright); color: var(--white); font-weight: 700; padding: 14px 28px; border-radius: 50px; font-size: 0.95rem; z-index: 999; transition: transform 0.38s cubic-bezier(.34,1.56,.64,1); white-space: nowrap; box-shadow: 0 4px 24px rgba(0,0,0,0.5); font-family: 'Open Sans', sans-serif; }
+  #toast.show { transform: translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🎵 <span>Rafael</span></h1>
+  <p>Toca una canción para escucharla</p>
+</header>
+
+<div id="player-section">
+  <div id="player-wrap">
+    <div id="yt-api-target"></div>
+    <div id="player-loading"><div class="spinner"></div><span>Cargando canción...</span></div>
+  </div>
+  <div id="np-bar">
+    <div id="np-label">Sonando ahora</div>
+    <div id="np-title">—</div>
+    <div id="np-artist">—</div>
+    <div id="queue-hint">Siguiente: <span id="next-song-name">—</span></div>
+    <div id="controls">
+      <button class="ctrl" id="btn-prev">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h2v12H6zm3.5 6 8.5 6V6z"/></svg>
+        Anterior
+      </button>
+      <button class="ctrl" id="btn-next">
+        Siguiente
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>
+      </button>
+      <button id="btn-stop" title="Detener">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h12v12H6z"/></svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<div id="song-list">
+  <div id="list-label">📋 Lista de Canciones</div>
+  <div id="empty-state">
+    <svg width="64" height="64" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>
+    <p>Aún no hay canciones.<br>Toca el <strong style="color:var(--accent)">+</strong> amarillo<br>para agregar con YouTube.</p>
+  </div>
+  <div id="cards-container"></div>
+</div>
+
+<button id="fab" title="Agregar canción">＋</button>
+
+<div id="add-panel">
+  <div id="add-overlay"></div>
+  <div id="add-sheet">
+    <h2>➕ Agregar canción</h2>
+    <p class="hint">En YouTube toca <strong>Compartir → Copiar enlace</strong> y pégalo aquí abajo.</p>
+    <div class="field-label">Enlace de YouTube *</div>
+    <input class="field-input" id="in-url" type="url" placeholder="https://www.youtube.com/watch?v=..." inputmode="url" autocomplete="off">
+    <div class="url-help">💡 Funciona con <strong>youtube.com</strong>, <strong>youtu.be</strong> y <strong>music.youtube.com</strong></div>
+    <div id="yt-preview">
+      <img id="yt-thumb" src="" alt="Miniatura">
+      <div id="yt-ok">✅ Video de YouTube detectado</div>
+    </div>
+    <div class="field-label">Nombre de la canción *</div>
+    <input class="field-input" id="in-title" type="text" placeholder="Ej: La Bamba" autocomplete="off">
+    <div class="field-label">Artista (opcional)</div>
+    <input class="field-input" id="in-artist" type="text" placeholder="Ej: Ritchie Valens" autocomplete="off">
+    <button id="btn-save">✓ Guardar en la lista</button>
+    <button id="btn-cancel">Cancelar</button>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ════════════════════════════════════════════════════════════════
+//  ★  LISTA DE CANCIONES DE RAFAEL  ★
+//  Para agregar una canción, copia una línea de ejemplo y
+//  cambia el título, artista e ID de YouTube.
+//
+//  ¿Cómo consigo el ID de YouTube?
+//  Abre el video en YouTube. El ID son los 11 caracteres
+//  después de "v=" en la URL.
+//  Ejemplo: youtube.com/watch?v=RVGQIHU4-84
+//                                ↑ este es el ID
+//
+//  FORMATO DE CADA CANCIÓN:
+//  { title: 'Nombre', artist: 'Artista', ytId: 'ID_YOUTUBE' },
+// ════════════════════════════════════════════════════════════════
+
+const CANCIONES = [
+
+  // ── AGREGA O QUITA CANCIONES AQUÍ ABAJO ──────────────────────
+
+  { title: 'Bésame Mucho',       artist: 'Trío Los Panchos',  ytId: 'U_ZCkFkXiLE' },
+  { title: 'El Rey',             artist: 'Vicente Fernández', ytId: 'RVGQIHU4-84' },
+  { title: 'Cielito Lindo',      artist: 'Mariachi Vargas',   ytId: 'ZaAFCpCyHy0' },
+
+  // Ejemplo de cómo agregar más:
+  // { title: 'La Bamba',        artist: 'Ritchie Valens',    ytId: 'qobP1D6CGEY' },
+  // { title: 'Sabor a Mí',      artist: 'Los Panchos',       ytId: 'PON_AQUI_EL_ID' },
+
+  // ─────────────────────────────────────────────────────────────
+
+];
+
+// ════════════════════════════════════════════════════════════════
+//  FIN DE LA LISTA — no toques nada más abajo
+// ════════════════════════════════════════════════════════════════
+
+// Mezcla la lista fija con las canciones agregadas desde el cel
+const KEY = 'rafael_extra_v1';
+function loadExtra() { try { return JSON.parse(localStorage.getItem(KEY)) || []; } catch { return []; } }
+function saveExtra(s) { localStorage.setItem(KEY, JSON.stringify(s)); }
+
+// Combina: primero las fijas, luego las agregadas desde el cel
+let songs = [...CANCIONES.map((s,i) => ({ ...s, id: 'fixed_'+i })), ...loadExtra()];
+let cur = -1;
+
+// ── YOUTUBE API ───────────────────────────────────────────────
+let ytPlayer = null;
+let apiReady  = false;
+
+window.onYouTubeIframeAPIReady = function () { apiReady = true; };
+
+(function() {
+  const tag = document.createElement('script');
+  tag.src = 'https://www.youtube.com/iframe_api';
+  document.head.appendChild(tag);
+})();
+
+function buildPlayer(ytId) {
+  if (ytPlayer) { try { ytPlayer.destroy(); } catch(e){} ytPlayer = null; }
+
+  const wrap = document.getElementById('player-wrap');
+  wrap.innerHTML = `
+    <div id="yt-api-target"></div>
+    <div id="player-loading"><div class="spinner"></div><span>Cargando canción...</span></div>
+  `;
+
+  function tryBuild() {
+    if (!apiReady) { setTimeout(tryBuild, 200); return; }
+    ytPlayer = new YT.Player('yt-api-target', {
+      videoId: ytId,
+      playerVars: { autoplay: 1, rel: 0, modestbranding: 1, playsinline: 1 },
+      events: {
+        onReady: (e) => {
+          e.target.playVideo();
+          const pl = document.getElementById('player-loading');
+          if (pl) pl.classList.add('gone');
+        },
+        onStateChange: (e) => {
+          if (e.data === YT.PlayerState.ENDED) {
+            play(cur < songs.length - 1 ? cur + 1 : 0);
+          }
+        },
+        onError: () => toast('⚠ Error al cargar el video')
+      }
+    });
+  }
+  tryBuild();
+}
+
+// ── UTILS ─────────────────────────────────────────────────────
+function getYtId(url) {
+  if (!url) return null;
+  const pats = [
+    /[?&]v=([a-zA-Z0-9_-]{11})/,
+    /youtu\.be\/([a-zA-Z0-9_-]{11})/,
+    /embed\/([a-zA-Z0-9_-]{11})/,
+    /shorts\/([a-zA-Z0-9_-]{11})/,
+  ];
+  for (const p of pats) { const m = url.match(p); if (m) return m[1]; }
+  if (/^[a-zA-Z0-9_-]{11}$/.test(url.trim())) return url.trim();
+  return null;
+}
+function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+// ── RENDER ────────────────────────────────────────────────────
+function render() {
+  const cardsWrap  = document.getElementById('cards-container');
+  const emptyState = document.getElementById('empty-state');
+  const nextName   = document.getElementById('next-song-name');
+
+  cardsWrap.innerHTML = '';
+  emptyState.classList.toggle('visible', !songs.length);
+
+  const nextIdx = songs.length > 1 ? (cur + 1) % songs.length : -1;
+  if (cur >= 0 && songs.length > 1) {
+    const n = songs[(cur + 1) % songs.length];
+    nextName.textContent = n.title + (n.artist ? ' — ' + n.artist : '');
+  } else {
+    nextName.textContent = '—';
+  }
+
+  songs.forEach((s, i) => {
+    const playing = i === cur;
+    const isNext  = i === nextIdx && cur >= 0;
+    const d = document.createElement('div');
+    d.className = 'song-card' + (playing ? ' playing' : isNext ? ' next-up' : '');
+    d.innerHTML = `
+      <div class="song-num">${playing ? '♪' : i + 1}</div>
+      <div class="song-disc"></div>
+      <div class="song-info">
+        <div class="song-title">${esc(s.title)}</div>
+        <div class="song-artist">${esc(s.artist || '')}</div>
+      </div>
+      <div class="song-right">
+        ${isNext ? '<span class="next-label">▶ siguiente</span>' : ''}
+      </div>
+    `;
+    d.addEventListener('click', () => play(i));
+    cardsWrap.appendChild(d);
+  });
+}
+
+// ── PLAY ──────────────────────────────────────────────────────
+function play(idx) {
+  if (!songs.length) return;
+  cur = (idx + songs.length) % songs.length;
+  const s = songs[cur];
+  document.getElementById('np-title').textContent  = s.title;
+  document.getElementById('np-artist').textContent = s.artist || '';
+  document.getElementById('player-section').classList.add('active');
+  buildPlayer(s.ytId);
+  setTimeout(() => document.getElementById('player-section').scrollIntoView({ behavior:'smooth', block:'start' }), 80);
+  render();
+}
+
+function stop() {
+  cur = -1;
+  if (ytPlayer) { try { ytPlayer.destroy(); } catch(e){} ytPlayer = null; }
+  const wrap = document.getElementById('player-wrap');
+  wrap.innerHTML = `<div id="yt-api-target"></div><div id="player-loading"><div class="spinner"></div><span>Cargando canción...</span></div>`;
+  document.getElementById('player-section').classList.remove('active');
+  render();
+}
+
+document.getElementById('btn-next').addEventListener('click', () => play(cur < 0 ? 0 : cur + 1));
+document.getElementById('btn-prev').addEventListener('click', () => play(cur <= 0 ? songs.length - 1 : cur - 1));
+document.getElementById('btn-stop').addEventListener('click', stop);
+
+// ── ADD PANEL (desde el cel) ──────────────────────────────────
+document.getElementById('fab').addEventListener('click', () => {
+  document.getElementById('add-panel').classList.add('open');
+  document.getElementById('in-url').focus();
+});
+
+function closePanel() {
+  document.getElementById('add-panel').classList.remove('open');
+  ['in-url','in-title','in-artist'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('yt-preview').classList.remove('visible');
+  document.getElementById('yt-thumb').src = '';
+}
+document.getElementById('add-overlay').addEventListener('click', closePanel);
+document.getElementById('btn-cancel').addEventListener('click', closePanel);
+
+let pt;
+document.getElementById('in-url').addEventListener('input', (e) => {
+  clearTimeout(pt);
+  pt = setTimeout(() => {
+    const id = getYtId(e.target.value.trim());
+    const prev = document.getElementById('yt-preview');
+    if (id) {
+      document.getElementById('yt-thumb').src = `https://img.youtube.com/vi/${id}/mqdefault.jpg`;
+      prev.classList.add('visible');
+    } else { prev.classList.remove('visible'); }
+  }, 500);
+});
+
+document.getElementById('btn-save').addEventListener('click', () => {
+  const ytId   = getYtId(document.getElementById('in-url').value.trim());
+  const title  = document.getElementById('in-title').value.trim();
+  const artist = document.getElementById('in-artist').value.trim();
+  if (!title) { toast('⚠ Escribe el nombre de la canción'); return; }
+  if (!ytId)  { toast('⚠ Pega un enlace válido de YouTube'); return; }
+  const extra = loadExtra();
+  extra.push({ id: Date.now(), title, artist, ytId });
+  saveExtra(extra);
+  songs = [...CANCIONES.map((s,i) => ({ ...s, id:'fixed_'+i })), ...extra];
+  closePanel();
+  render();
+  toast('✓ Canción guardada');
+});
+
+render();
+</script>
+</body>
+</html>
