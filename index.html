@@ -40,10 +40,7 @@
     border-bottom: 4px solid var(--accent);
     box-shadow: 0 4px 28px rgba(0,0,0,0.55);
   }
-  header h1 {
-    font-family: 'Montserrat', sans-serif;
-    font-size: 2.5rem; font-weight: 900; color: var(--white);
-  }
+  header h1 { font-family: 'Montserrat', sans-serif; font-size: 2.5rem; font-weight: 900; color: var(--white); }
   header h1 span { color: var(--accent); }
   header p { color: var(--off-white); font-size: 1rem; margin-top: 6px; font-weight: 600; opacity: 0.9; }
 
@@ -67,7 +64,7 @@
     display: flex; flex-direction: column;
     align-items: center; justify-content: center; gap: 14px;
     color: var(--muted); font-size: 1rem; font-weight: 600;
-    transition: opacity 0.5s;
+    transition: opacity 0.5s; z-index: 2;
   }
   #player-loading.gone { opacity: 0; pointer-events: none; }
 
@@ -100,22 +97,14 @@
     background: var(--green); box-shadow: 0 0 10px var(--green);
     animation: pulse 1.5s ease-in-out infinite;
   }
-  @keyframes pulse {
-    0%,100% { opacity:1; transform:scale(1); }
-    50% { opacity:0.3; transform:scale(0.7); }
-  }
-  #np-title {
-    font-family: 'Montserrat', sans-serif;
-    font-size: 1.45rem; font-weight: 900;
-    color: var(--white); line-height: 1.2; margin-bottom: 4px;
-  }
-  #np-artist { color: var(--off-white); font-size: 1rem; font-weight: 600; margin-bottom: 14px; opacity: 0.9; }
+  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1);}50%{opacity:0.3;transform:scale(0.7);} }
 
+  #np-title { font-family: 'Montserrat', sans-serif; font-size: 1.45rem; font-weight: 900; color: var(--white); line-height: 1.2; margin-bottom: 4px; }
+  #np-artist { color: var(--off-white); font-size: 1rem; font-weight: 600; margin-bottom: 14px; opacity: 0.9; }
   #queue-hint { font-size: 0.82rem; color: var(--off-white); margin-bottom: 14px; opacity: 0.75; font-weight: 600; }
   #queue-hint span { color: var(--accent); font-weight: 700; }
 
   #controls { display: flex; gap: 10px; align-items: stretch; }
-
   .ctrl {
     flex: 1; background: var(--bg);
     border: 2px solid var(--blue-light);
@@ -127,7 +116,6 @@
     font-family: 'Open Sans', sans-serif; min-height: 56px;
   }
   .ctrl:active { transform: scale(0.96); background: var(--card); }
-
   #btn-stop {
     flex: 0 0 56px; height: 56px;
     background: rgba(255,82,82,0.12);
@@ -139,12 +127,7 @@
   #btn-stop:active { transform: scale(0.96); background: rgba(255,82,82,0.25); }
 
   #song-list { padding: 24px 16px 0; }
-  #list-label {
-    font-family: 'Montserrat', sans-serif;
-    font-size: 0.78rem; letter-spacing: 3px;
-    text-transform: uppercase; color: var(--accent);
-    font-weight: 700; margin-bottom: 14px;
-  }
+  #list-label { font-family: 'Montserrat', sans-serif; font-size: 0.78rem; letter-spacing: 3px; text-transform: uppercase; color: var(--accent); font-weight: 700; margin-bottom: 14px; }
 
   #empty-state { text-align: center; padding: 50px 20px; color: var(--muted); display: none; }
   #empty-state.visible { display: block; }
@@ -163,38 +146,20 @@
     min-height: 84px;
   }
   .song-card:active { transform: scale(0.985); }
-  .song-card.playing {
-    background: var(--blue);
-    border-color: var(--accent);
-    box-shadow: 0 4px 24px rgba(21,101,192,0.55);
-  }
+  .song-card.playing { background: var(--blue); border-color: var(--accent); box-shadow: 0 4px 24px rgba(21,101,192,0.55); }
   .song-card.next-up { border-color: rgba(66,165,245,0.5); background: #0d2855; }
 
-  .song-num {
-    font-family: 'Montserrat', sans-serif;
-    font-size: 1.2rem; font-weight: 900;
-    color: var(--muted); width: 30px; text-align: center; flex-shrink: 0;
-  }
+  .song-num { font-family: 'Montserrat', sans-serif; font-size: 1.2rem; font-weight: 900; color: var(--muted); width: 30px; text-align: center; flex-shrink: 0; }
   .song-card.playing .song-num { color: var(--accent); font-size: 1.4rem; }
   .song-card.next-up .song-num { color: var(--blue-light); }
 
-  .song-disc {
-    width: 54px; height: 54px; border-radius: 50%;
-    background: radial-gradient(circle at 35% 35%, #1E88E5, #08121f);
-    border: 3px solid rgba(66,165,245,0.25);
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0; position: relative; overflow: hidden;
-  }
+  .song-disc { width: 54px; height: 54px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #1E88E5, #08121f); border: 3px solid rgba(66,165,245,0.25); display: flex; align-items: center; justify-content: center; flex-shrink: 0; position: relative; overflow: hidden; }
   .song-disc::after { content: ''; width: 16px; height: 16px; background: var(--bg); border-radius: 50%; position: absolute; }
   .song-card.playing .song-disc { border-color: var(--accent); animation: spinDisc 3s linear infinite; }
   @keyframes spinDisc { to { transform: rotate(360deg); } }
 
   .song-info { flex: 1; min-width: 0; }
-  .song-title {
-    font-family: 'Montserrat', sans-serif;
-    font-size: 1.08rem; font-weight: 700; color: var(--white);
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-  }
+  .song-title { font-family: 'Montserrat', sans-serif; font-size: 1.08rem; font-weight: 700; color: var(--white); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .song-card.playing .song-title { color: var(--accent); }
   .song-card.next-up .song-title { color: var(--blue-light); }
   .song-artist { font-size: 0.9rem; color: var(--muted); margin-top: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 600; }
@@ -203,28 +168,13 @@
   .song-right { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; flex-shrink: 0; }
   .next-label { font-size: 0.68rem; font-weight: 700; color: var(--blue-light); letter-spacing: 1px; text-transform: uppercase; }
 
-  #fab {
-    position: fixed; bottom: 28px; right: 20px;
-    width: 68px; height: 68px;
-    background: var(--accent);
-    border-radius: 50%; border: none; color: var(--bg);
-    font-size: 2.2rem; font-weight: 900; cursor: pointer;
-    box-shadow: 0 6px 28px rgba(255,204,2,0.55);
-    display: flex; align-items: center; justify-content: center;
-    transition: transform 0.2s; z-index: 100;
-  }
+  #fab { position: fixed; bottom: 28px; right: 20px; width: 68px; height: 68px; background: var(--accent); border-radius: 50%; border: none; color: var(--bg); font-size: 2.2rem; font-weight: 900; cursor: pointer; box-shadow: 0 6px 28px rgba(255,204,2,0.55); display: flex; align-items: center; justify-content: center; transition: transform 0.2s; z-index: 100; }
   #fab:active { transform: scale(0.91); }
 
   #add-panel { position: fixed; inset: 0; z-index: 200; display: none; align-items: flex-end; }
   #add-panel.open { display: flex; }
   #add-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.78); backdrop-filter: blur(5px); }
-  #add-sheet {
-    position: relative; background: var(--surface);
-    border-radius: 28px 28px 0 0; padding: 30px 22px 50px;
-    width: 100%; z-index: 1;
-    border-top: 3px solid var(--blue-bright);
-    max-height: 92vh; overflow-y: auto;
-  }
+  #add-sheet { position: relative; background: var(--surface); border-radius: 28px 28px 0 0; padding: 30px 22px 50px; width: 100%; z-index: 1; border-top: 3px solid var(--blue-bright); max-height: 92vh; overflow-y: auto; }
   #add-sheet h2 { font-family: 'Montserrat', sans-serif; font-size: 1.5rem; font-weight: 900; color: var(--white); margin-bottom: 8px; }
   .hint { font-size: 0.9rem; color: var(--muted); margin-bottom: 20px; line-height: 1.6; font-weight: 600; }
   .hint strong { color: var(--blue-light); }
@@ -298,10 +248,7 @@
     <div class="field-label">Enlace de YouTube *</div>
     <input class="field-input" id="in-url" type="url" placeholder="https://www.youtube.com/watch?v=..." inputmode="url" autocomplete="off">
     <div class="url-help">💡 Funciona con <strong>youtube.com</strong>, <strong>youtu.be</strong> y <strong>music.youtube.com</strong></div>
-    <div id="yt-preview">
-      <img id="yt-thumb" src="" alt="Miniatura">
-      <div id="yt-ok">✅ Video de YouTube detectado</div>
-    </div>
+    <div id="yt-preview"><img id="yt-thumb" src="" alt="Miniatura"><div id="yt-ok">✅ Video de YouTube detectado</div></div>
     <div class="field-label">Nombre de la canción *</div>
     <input class="field-input" id="in-title" type="text" placeholder="Ej: La Bamba" autocomplete="off">
     <div class="field-label">Artista (opcional)</div>
@@ -316,63 +263,73 @@
 <script>
 // ════════════════════════════════════════════════════════════════
 //  ★  LISTA DE CANCIONES DE RAFAEL  ★
-//  Para agregar una canción, copia una línea de ejemplo y
-//  cambia el título, artista e ID de YouTube.
-//
-//  ¿Cómo consigo el ID de YouTube?
-//  Abre el video en YouTube. El ID son los 11 caracteres
-//  después de "v=" en la URL.
-//  Ejemplo: youtube.com/watch?v=RVGQIHU4-84
-//                                ↑ este es el ID
 //
 //  FORMATO DE CADA CANCIÓN:
 //  { title: 'Nombre', artist: 'Artista', ytId: 'ID_YOUTUBE' },
+//
+//  El ID son los 11 caracteres después de "v=" en la URL de YouTube.
+//  Ejemplo: youtube.com/watch?v=RVGQIHU4-84  →  ytId: 'RVGQIHU4-84'
 // ════════════════════════════════════════════════════════════════
 
 const CANCIONES = [
 
   // ── AGREGA O QUITA CANCIONES AQUÍ ABAJO ──────────────────────
 
-  { title: 'Bésame Mucho',       artist: 'Trío Los Panchos',  ytId: 'U_ZCkFkXiLE' },
-  { title: 'El Rey',             artist: 'Vicente Fernández', ytId: 'RVGQIHU4-84' },
-  { title: 'Cielito Lindo',      artist: 'Enrique Iglesias',   ytId: 'NUsoVlDFqZg' },
-{ title: 'La Bamba', artist: 'Chino y Nacho', ytId: 'AMTAQ-AJS4Y' },
-  { title: 'Ahora te puedes marchar', artist: 'Luis Miguel', ytId: 'yG7MPEQm1-w' },
-  // Ejemplo de cómo agregar más:
-  // { title: 'La Bamba',        artist: 'Ritchie Valens',    ytId: 'qobP1D6CGEY' },
-  // { title: 'Sabor a Mí',      artist: 'Los Panchos',       ytId: 'PON_AQUI_EL_ID' },
+  { title: 'Bésame Mucho',          artist: 'Trío Los Panchos',  ytId: 'U_ZCkFkXiLE' },
+  { title: 'El Rey',                artist: 'Vicente Fernández', ytId: 'RVGQIHU4-84' },
+  { title: 'Cielito Lindo',         artist: 'Mariachi Vargas',   ytId: 'ZaAFCpCyHy0' },
+
+  // Ejemplo:
+  // { title: 'La Bamba',           artist: 'Ritchie Valens',    ytId: 'qobP1D6CGEY' },
 
   // ─────────────────────────────────────────────────────────────
-
 ];
 
 // ════════════════════════════════════════════════════════════════
 //  FIN DE LA LISTA — no toques nada más abajo
 // ════════════════════════════════════════════════════════════════
 
-// Mezcla la lista fija con las canciones agregadas desde el cel
 const KEY = 'rafael_extra_v1';
 function loadExtra() { try { return JSON.parse(localStorage.getItem(KEY)) || []; } catch { return []; } }
 function saveExtra(s) { localStorage.setItem(KEY, JSON.stringify(s)); }
 
-// Combina: primero las fijas, luego las agregadas desde el cel
-let songs = [...CANCIONES.map((s,i) => ({ ...s, id: 'fixed_'+i })), ...loadExtra()];
+let songs = [...CANCIONES.map((s,i) => ({ ...s, id:'fixed_'+i })), ...loadExtra()];
 let cur = -1;
+let ytPlayer = null;
+let apiReady = false;
+let playRetryCount = 0;
+let playRetryTimer = null;
 
 // ── YOUTUBE API ───────────────────────────────────────────────
-let ytPlayer = null;
-let apiReady  = false;
-
-window.onYouTubeIframeAPIReady = function () { apiReady = true; };
-
+window.onYouTubeIframeAPIReady = function() { apiReady = true; };
 (function() {
   const tag = document.createElement('script');
   tag.src = 'https://www.youtube.com/iframe_api';
   document.head.appendChild(tag);
 })();
 
+function forcePlay(player) {
+  // Intenta reproducir varias veces para vencer el bloqueo de autoplay
+  clearTimeout(playRetryTimer);
+  playRetryCount = 0;
+  function attempt() {
+    if (!player) return;
+    try {
+      player.playVideo();
+      const state = player.getPlayerState();
+      // Si sigue pausado o en buffer, reintenta hasta 10 veces
+      if (state !== 1 && playRetryCount < 10) {
+        playRetryCount++;
+        playRetryTimer = setTimeout(attempt, 600);
+      }
+    } catch(e) {}
+  }
+  attempt();
+}
+
 function buildPlayer(ytId) {
   if (ytPlayer) { try { ytPlayer.destroy(); } catch(e){} ytPlayer = null; }
+  clearTimeout(playRetryTimer);
 
   const wrap = document.getElementById('player-wrap');
   wrap.innerHTML = `
@@ -382,18 +339,37 @@ function buildPlayer(ytId) {
 
   function tryBuild() {
     if (!apiReady) { setTimeout(tryBuild, 200); return; }
+
     ytPlayer = new YT.Player('yt-api-target', {
       videoId: ytId,
-      playerVars: { autoplay: 1, rel: 0, modestbranding: 1, playsinline: 1 },
+      playerVars: {
+        autoplay: 1,
+        rel: 0,
+        modestbranding: 1,
+        playsinline: 1,
+        enablejsapi: 1,
+        origin: window.location.origin
+      },
       events: {
         onReady: (e) => {
-          e.target.playVideo();
           const pl = document.getElementById('player-loading');
           if (pl) pl.classList.add('gone');
+          // Forzar play con reintentos
+          forcePlay(e.target);
         },
         onStateChange: (e) => {
+          // -1 = sin iniciar, 0 = terminado, 1 = reproduciendo, 2 = pausado, 3 = buffering
           if (e.data === YT.PlayerState.ENDED) {
-            play(cur < songs.length - 1 ? cur + 1 : 0);
+            // Canción terminó → siguiente automático
+            const next = (cur + 1) % songs.length;
+            setTimeout(() => play(next), 800);
+          }
+          if (e.data === YT.PlayerState.PAUSED) {
+            // Si se pausa justo al cargar (bloqueo de autoplay), reintenta
+            if (playRetryCount < 10) {
+              playRetryCount++;
+              playRetryTimer = setTimeout(() => forcePlay(e.target), 600);
+            }
           }
         },
         onError: () => toast('⚠ Error al cargar el video')
@@ -406,12 +382,7 @@ function buildPlayer(ytId) {
 // ── UTILS ─────────────────────────────────────────────────────
 function getYtId(url) {
   if (!url) return null;
-  const pats = [
-    /[?&]v=([a-zA-Z0-9_-]{11})/,
-    /youtu\.be\/([a-zA-Z0-9_-]{11})/,
-    /embed\/([a-zA-Z0-9_-]{11})/,
-    /shorts\/([a-zA-Z0-9_-]{11})/,
-  ];
+  const pats = [/[?&]v=([a-zA-Z0-9_-]{11})/, /youtu\.be\/([a-zA-Z0-9_-]{11})/, /embed\/([a-zA-Z0-9_-]{11})/, /shorts\/([a-zA-Z0-9_-]{11})/];
   for (const p of pats) { const m = url.match(p); if (m) return m[1]; }
   if (/^[a-zA-Z0-9_-]{11}$/.test(url.trim())) return url.trim();
   return null;
@@ -425,10 +396,9 @@ function toast(msg) {
 
 // ── RENDER ────────────────────────────────────────────────────
 function render() {
-  const cardsWrap  = document.getElementById('cards-container');
+  const cardsWrap = document.getElementById('cards-container');
   const emptyState = document.getElementById('empty-state');
-  const nextName   = document.getElementById('next-song-name');
-
+  const nextName = document.getElementById('next-song-name');
   cardsWrap.innerHTML = '';
   emptyState.classList.toggle('visible', !songs.length);
 
@@ -442,19 +412,17 @@ function render() {
 
   songs.forEach((s, i) => {
     const playing = i === cur;
-    const isNext  = i === nextIdx && cur >= 0;
+    const isNext = i === nextIdx && cur >= 0;
     const d = document.createElement('div');
     d.className = 'song-card' + (playing ? ' playing' : isNext ? ' next-up' : '');
     d.innerHTML = `
-      <div class="song-num">${playing ? '♪' : i + 1}</div>
+      <div class="song-num">${playing ? '♪' : i+1}</div>
       <div class="song-disc"></div>
       <div class="song-info">
         <div class="song-title">${esc(s.title)}</div>
-        <div class="song-artist">${esc(s.artist || '')}</div>
+        <div class="song-artist">${esc(s.artist||'')}</div>
       </div>
-      <div class="song-right">
-        ${isNext ? '<span class="next-label">▶ siguiente</span>' : ''}
-      </div>
+      <div class="song-right">${isNext ? '<span class="next-label">▶ siguiente</span>' : ''}</div>
     `;
     d.addEventListener('click', () => play(i));
     cardsWrap.appendChild(d);
@@ -466,7 +434,7 @@ function play(idx) {
   if (!songs.length) return;
   cur = (idx + songs.length) % songs.length;
   const s = songs[cur];
-  document.getElementById('np-title').textContent  = s.title;
+  document.getElementById('np-title').textContent = s.title;
   document.getElementById('np-artist').textContent = s.artist || '';
   document.getElementById('player-section').classList.add('active');
   buildPlayer(s.ytId);
@@ -476,6 +444,7 @@ function play(idx) {
 
 function stop() {
   cur = -1;
+  clearTimeout(playRetryTimer);
   if (ytPlayer) { try { ytPlayer.destroy(); } catch(e){} ytPlayer = null; }
   const wrap = document.getElementById('player-wrap');
   wrap.innerHTML = `<div id="yt-api-target"></div><div id="player-loading"><div class="spinner"></div><span>Cargando canción...</span></div>`;
@@ -487,12 +456,11 @@ document.getElementById('btn-next').addEventListener('click', () => play(cur < 0
 document.getElementById('btn-prev').addEventListener('click', () => play(cur <= 0 ? songs.length - 1 : cur - 1));
 document.getElementById('btn-stop').addEventListener('click', stop);
 
-// ── ADD PANEL (desde el cel) ──────────────────────────────────
+// ── ADD PANEL ─────────────────────────────────────────────────
 document.getElementById('fab').addEventListener('click', () => {
   document.getElementById('add-panel').classList.add('open');
   document.getElementById('in-url').focus();
 });
-
 function closePanel() {
   document.getElementById('add-panel').classList.remove('open');
   ['in-url','in-title','in-artist'].forEach(id => document.getElementById(id).value = '');
@@ -508,25 +476,22 @@ document.getElementById('in-url').addEventListener('input', (e) => {
   pt = setTimeout(() => {
     const id = getYtId(e.target.value.trim());
     const prev = document.getElementById('yt-preview');
-    if (id) {
-      document.getElementById('yt-thumb').src = `https://img.youtube.com/vi/${id}/mqdefault.jpg`;
-      prev.classList.add('visible');
-    } else { prev.classList.remove('visible'); }
+    if (id) { document.getElementById('yt-thumb').src = `https://img.youtube.com/vi/${id}/mqdefault.jpg`; prev.classList.add('visible'); }
+    else { prev.classList.remove('visible'); }
   }, 500);
 });
 
 document.getElementById('btn-save').addEventListener('click', () => {
-  const ytId   = getYtId(document.getElementById('in-url').value.trim());
-  const title  = document.getElementById('in-title').value.trim();
+  const ytId = getYtId(document.getElementById('in-url').value.trim());
+  const title = document.getElementById('in-title').value.trim();
   const artist = document.getElementById('in-artist').value.trim();
   if (!title) { toast('⚠ Escribe el nombre de la canción'); return; }
-  if (!ytId)  { toast('⚠ Pega un enlace válido de YouTube'); return; }
+  if (!ytId) { toast('⚠ Pega un enlace válido de YouTube'); return; }
   const extra = loadExtra();
   extra.push({ id: Date.now(), title, artist, ytId });
   saveExtra(extra);
   songs = [...CANCIONES.map((s,i) => ({ ...s, id:'fixed_'+i })), ...extra];
-  closePanel();
-  render();
+  closePanel(); render();
   toast('✓ Canción guardada');
 });
 
